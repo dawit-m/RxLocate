@@ -20,12 +20,10 @@ public class Medicine {
 
     @Column(nullable = false)
     private int quantity;
-
-    // Fixed: Explicitly mapping Java variable to MySQL column with underscore
+    
     @Column(name = "brand_country")
     private String brandCountry;
 
-    // Explicitly mapping dosage column
     @Column(name = "dosage")
     private String dosage;
 
@@ -33,16 +31,14 @@ public class Medicine {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate expiryDate;
 
-    // Keeping your image_path mapping in case you use it later
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pharmacy_id", nullable = false)
     private Pharmacy pharmacy;
 
-    // Constructors
     public Medicine() {
     }
 
-    // Getters and Setters
+
     public Long getId() {
         return id;
     }

@@ -7,10 +7,8 @@ import java.util.List;
 
 public interface MedicineRepository extends JpaRepository<Medicine, Long> {
 
-    // For the Public Search
     List<Medicine> findByNameContainingIgnoreCase(String name);
 
-    // For the Dashboard
     List<Medicine> findByPharmacy(Pharmacy pharmacy);
 
 }

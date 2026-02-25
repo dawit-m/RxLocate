@@ -19,7 +19,6 @@ public class MedicineActionController {
 
     @GetMapping("/update-quantity/{id}/{action}")
     public String updateQuantity(@PathVariable Long id, @PathVariable String action) {
-        // We use the service to find the medicine
         Medicine med = medicineService.findById(id);
 
         if (med != null) {
@@ -28,10 +27,8 @@ public class MedicineActionController {
             } else if ("decrease".equals(action) && med.getQuantity() > 0) {
                 med.setQuantity(med.getQuantity() - 1);
             }
-            medicineService.save(med); // Save the change
+            medicineService.save(med);
         }
-
-        // This sends the user back to the dashboard so they see the new number
         return "redirect:/pharmacy/dashboard";
     }
 }

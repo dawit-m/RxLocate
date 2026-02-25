@@ -11,19 +11,13 @@ import java.util.List;
 public class MedicineController {
 
     private final MedicineService medicineService;
-
-    // Standard constructor injection
     public MedicineController(MedicineService medicineService) {
         this.medicineService = medicineService;
     }
-
-    // Endpoint for pharmacy inventory management
     @PostMapping("/add")
     public Medicine addMedicine(@RequestBody Medicine medicine) {
         return medicineService.save(medicine);
     }
-
-    // Primary search logic for patients/clients
     @GetMapping("/search")
     public List<Medicine> searchMedicine(@RequestParam String name) {
         return medicineService.searchByName(name);

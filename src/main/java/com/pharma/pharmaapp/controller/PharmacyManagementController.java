@@ -105,7 +105,6 @@ public class PharmacyManagementController {
         medicine.setPrice(price);
         medicine.setQuantity(quantity);
 
-        // CRITICAL FIX: These lines save the data to the object
         medicine.setBrandCountry(brandCountry);
         medicine.setDosage(dosage);
 

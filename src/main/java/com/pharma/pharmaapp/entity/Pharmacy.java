@@ -50,8 +50,6 @@ public class Pharmacy {
         this.googleMapLink = googleMapLink;
     }
 
-    // --- Getters and Setters ---
-
     public Long getId() {
         return id;
     }

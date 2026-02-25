@@ -20,8 +20,7 @@ public class ClientController {
 
     @GetMapping("/client")
     public String showClientPage(Model model) {
-        // i am providing an empty list so the page doesn't crash before the first
-        // search
+
         model.addAttribute("medicines", new java.util.ArrayList<>());
         return "client-search";
     }
@@ -29,11 +28,11 @@ public class ClientController {
     @GetMapping("/client/search")
     public String search(@RequestParam(required = false) String name, Model model) {
         if (name != null && !name.isEmpty()) {
-            // This now searches the real database and updates searchCount
+            
             List<Medicine> results = medicineService.searchByName(name);
             model.addAttribute("medicines", results);
             model.addAttribute("searchQuery", name);
         }
-        return "client-search"; // this Returns client.html
+        return "client-search"; 
     }
 }
