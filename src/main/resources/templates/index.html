@@ -1,164 +1,67 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RxLocate | Smart Medicine Access</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --rx-teal: #006064;
-        --rx-dark: #00363a;
-        --rx-accent: #26a69a;
-      }
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="~{fragments/layout :: meta('RxLocate | Find medicine nearby', 'Find nearby medicine availability and pharmacy details before you travel.')}" />
+  <link rel="stylesheet" th:href="@{/css/landing-luxury.css}" />
+</head>
+<body class="page landing-luxury">
+<th:block th:replace="~{fragments/layout :: icons}" />
+<a class="skip-link" href="#main">Skip to content</a>
+<th:block th:replace="~{fragments/layout :: siteHeader('home')}" />
 
-      body {
-        background: #f8fafb;
-        font-family: "Segoe UI", Roboto, sans-serif;
-        margin: 0;
-      }
+<main id="main">
+  <section class="luxury-hero" data-reveal>
+    <div class="container luxury-hero__grid">
+      <div class="luxury-hero__copy">
+        <span class="eyebrow">RxLocate · pharmacy discovery</span>
+        <h1>Find the right medicine. <em>Nearby.</em></h1>
+        <p class="luxury-hero__lead">Search availability, compare pharmacies, and call ahead with confidence.</p>
 
-      /* Modern Hero Section */
-      .hero {
-        background: linear-gradient(
-          135deg,
-          var(--rx-dark) 0%,
-          var(--rx-teal) 100%
-        );
-        color: white;
-        padding: 120px 0 160px 0;
-        border-bottom-left-radius: 100px;
-        border-bottom-right-radius: 100px;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      }
-
-      .hero h1 {
-        font-size: 4rem;
-        font-weight: 800;
-      }
-
-      /* Choice Cards */
-      .selection-container {
-        margin-top: -80px;
-      }
-
-      .card-choice {
-        border: none;
-        border-radius: 25px;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-        background: white;
-        overflow: hidden;
-      }
-
-      .card-choice:hover {
-        transform: translateY(-12px);
-        box-shadow: 0 25px 50px rgba(0, 60, 64, 0.15);
-      }
-
-      .icon-circle {
-        width: 80px;
-        height: 80px;
-        background: var(--rx-teal);
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 20px auto;
-        font-size: 2rem;
-      }
-
-      .btn-rx-primary {
-        background: var(--rx-teal);
-        color: white;
-        border-radius: 12px;
-        padding: 14px 30px;
-        font-weight: 700;
-        border: none;
-        transition: 0.3s;
-      }
-
-      .btn-rx-primary:hover {
-        background: var(--rx-dark);
-        color: white;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-      }
-
-      .btn-rx-outline {
-        border: 2px solid var(--rx-teal);
-        color: var(--rx-teal);
-        border-radius: 12px;
-        padding: 14px 30px;
-        font-weight: 700;
-        transition: 0.3s;
-      }
-
-      .btn-rx-outline:hover {
-        background: var(--rx-teal);
-        color: white;
-      }
-
-      footer {
-        margin-top: 60px;
-        color: #999;
-        font-size: 0.9rem;
-      }
-    </style>
-  </head>
-  <body>
-    <section class="hero text-center">
-      <div class="container">
-        <h1 class="mb-3">🩺 RxLocate</h1>
-        <p class="lead opacity-75 fs-4">
-          Advanced Pharmacy Inventory & Medicine Locator System
-        </p>
+        <form class="luxury-search" th:action="@{/client/search}" method="get" role="search">
+          <span class="luxury-search__icon"><svg class="icon" aria-hidden="true"><use href="#i-search" /></svg></span>
+          <label class="sr-only" for="luxuryMedicineSearch">Medicine, strength, or brand</label>
+          <input id="luxuryMedicineSearch" type="search" name="name" placeholder="Medicine, strength, or brand" autocomplete="off" required />
+          <button class="btn btn--primary" type="submit">Find medicine <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></button>
+        </form>
+        <div class="luxury-hero__under"><span><svg class="icon" aria-hidden="true"><use href="#i-shield" /></svg>No account needed</span><span>Try “paracetamol”</span></div>
       </div>
-    </section>
 
-    <div class="container selection-container">
-      <div class="row justify-content-center g-4">
-        <div class="col-md-5 col-lg-4">
-          <div class="card card-choice p-5 text-center h-100">
-            <div class="icon-circle">🔍</div>
-            <h3 class="fw-bold text-dark">Find Medicine</h3>
-            <p class="text-muted mb-4">
-              Search real-time availability, compare prices, and locate
-              pharmacies near you.
-            </p>
-            <a
-              th:href="@{/client/search}"
-              class="btn btn-rx-primary w-100 mt-auto"
-              >Start Search</a
-            >
-          </div>
+      <div class="availability-card" aria-label="Example pharmacy availability" data-reveal>
+        <div class="availability-card__top"><span class="eyebrow">Live availability</span><span class="availability-card__signal"><i></i>Updated today</span></div>
+        <div class="availability-card__query"><span>Searching for</span><strong>Paracetamol 500mg</strong></div>
+        <div class="availability-card__list">
+          <article class="availability-item"><div><strong>Abyssinia Pharmacy</strong><span><svg class="icon" aria-hidden="true"><use href="#i-pin" /></svg>Bole · 1.2 km</span></div><div class="availability-item__side"><span class="status status--good">In stock</span><b>24.00 ETB</b></div></article>
+          <article class="availability-item"><div><strong>HealthPlus Pharmacy</strong><span><svg class="icon" aria-hidden="true"><use href="#i-pin" /></svg>Piassa · 2.8 km</span></div><div class="availability-item__side"><span class="status status--limited">Limited</span><b>26.50 ETB</b></div></article>
         </div>
-
-        <div class="col-md-5 col-lg-4">
-          <div class="card card-choice p-5 text-center h-100">
-            <div class="icon-circle" style="background: #2c3e50">🏪</div>
-            <h3 class="fw-bold text-dark">Pharmacy Portal</h3>
-            <p class="text-muted mb-4">
-              Manage stock levels, update prices, and register your Pharmacy
-              inventory.
-            </p>
-            <a
-              th:href="@{/pharmacy/login}"
-              class="btn btn-rx-outline w-100 mt-auto"
-              >Partner Login</a
-            >
-          </div>
-        </div>
+        <div class="availability-card__foot"><span>Stock is entered by each pharmacy.</span><a th:href="@{/client/search(name='paracetamol')}">Explore <span aria-hidden="true">→</span></a></div>
       </div>
     </div>
+  </section>
 
-    <footer class="text-center pb-5">
-      <div class="container">
-        <p>&copy; 2026 RxLocate Ethiopia | Connecting Healthcare</p>
+  <section class="luxury-proof" data-reveal aria-label="RxLocate promise">
+    <div class="container luxury-proof__grid">
+      <div><span class="luxury-proof__number">01</span><strong>Search simply</strong><span>Use a name, strength, or brand.</span></div>
+      <div><span class="luxury-proof__number">02</span><strong>Compare clearly</strong><span>See stock, price, and distance.</span></div>
+      <div><span class="luxury-proof__number">03</span><strong>Call ahead</strong><span>Keep a human check in the loop.</span></div>
+    </div>
+  </section>
+
+  <section class="luxury-story" data-reveal>
+    <div class="container luxury-story__grid">
+      <div class="luxury-story__intro"><span class="eyebrow">A clearer decision</span><h2>Less uncertainty.<br /><em>More care.</em></h2><p>RxLocate connects people with local pharmacies and the information they need next.</p></div>
+      <div class="luxury-story__notes">
+        <article><span class="luxury-story__mark">A</span><div><h3>Availability with context</h3><p>Every listing shows the pharmacy, location, price, and stock signal together.</p></div></article>
+        <article><span class="luxury-story__mark">B</span><div><h3>Honest by design</h3><p>Freshness and limitations stay close to the decision, never hidden in fine print.</p></div></article>
+        <article><span class="luxury-story__mark">C</span><div><h3>For people and pharmacies</h3><p>Patients find what they need. Pharmacies keep their shelves visible.</p></div></article>
       </div>
-    </footer>
-  </body>
+    </div>
+  </section>
+
+  <section class="luxury-quiet-cta" data-reveal>
+    <div class="container luxury-quiet-cta__inner"><div><span class="eyebrow">For pharmacy teams</span><h2>Make your stock easier to find.</h2></div><a class="btn btn--light" th:href="@{/pharmacy/register}">Partner with RxLocate <svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right" /></svg></a></div>
+  </section>
+</main>
+
+<th:block th:replace="~{fragments/layout :: siteFooter}" />
+</body>
 </html>

@@ -2,7 +2,10 @@ package com.pharma.pharmaapp.controller;
 
 import com.pharma.pharmaapp.entity.Medicine;
 import com.pharma.pharmaapp.service.MedicineService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -11,13 +14,11 @@ import java.util.List;
 public class MedicineController {
 
     private final MedicineService medicineService;
+
     public MedicineController(MedicineService medicineService) {
         this.medicineService = medicineService;
     }
-    @PostMapping("/add")
-    public Medicine addMedicine(@RequestBody Medicine medicine) {
-        return medicineService.save(medicine);
-    }
+
     @GetMapping("/search")
     public List<Medicine> searchMedicine(@RequestParam String name) {
         return medicineService.searchByName(name);

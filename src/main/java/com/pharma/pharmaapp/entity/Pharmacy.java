@@ -1,6 +1,7 @@
 package com.pharma.pharmaapp.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,15 +26,18 @@ public class Pharmacy {
     private String phoneNumber;
 
     @Column(nullable = false, unique = true)
+    @JsonIgnore
     private String username;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(length = 500)
     private String googleMapLink;
 
     @OneToMany(mappedBy = "pharmacy", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Medicine> medicines = new ArrayList<>();
 
     public Pharmacy() {

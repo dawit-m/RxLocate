@@ -1,205 +1,104 @@
-<!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pharmacy Registration | RxLocate</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --rx-teal: #006064;
-        --rx-dark: #00363a;
-      }
-      body {
-        background-color: #f0f4f4;
-        background-image: linear-gradient(
-          180deg,
-          var(--rx-dark) 300px,
-          #f0f4f4 300px
-        );
-        font-family:
-          "Inter",
-          system-ui,
-          -apple-system,
-          sans-serif;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        margin: 0;
-        padding: 40px 20px;
-      }
-      .register-container {
-        background: white;
-        padding: 45px;
-        border-radius: 24px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        max-width: 550px;
-      }
-      .brand-logo {
-        color: var(--rx-teal);
-        font-weight: 800;
-        font-size: 1.8rem;
-        text-align: center;
-        margin-bottom: 5px;
-        letter-spacing: -1px;
-      }
-      .section-title {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        color: var(--rx-teal);
-        font-weight: 800;
-        margin-top: 25px;
-        margin-bottom: 15px;
-        padding-bottom: 5px;
-        border-bottom: 2px solid #f0f4f4;
-        letter-spacing: 1px;
-      }
-      .form-control {
-        border-radius: 10px;
-        padding: 11px 15px;
-        border: 1px solid #d1d5db;
-        background-color: #f9fafb;
-      }
-      .form-control:focus {
-        border-color: var(--rx-teal);
-        box-shadow: 0 0 0 3px rgba(0, 96, 100, 0.1);
-        background-color: white;
-      }
-      .btn-register {
-        background-color: var(--rx-teal);
-        border: none;
-        color: white;
-        font-weight: 700;
-        padding: 14px;
-        border-radius: 12px;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-      .btn-register:hover {
-        background-color: var(--rx-dark);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-      }
-      label {
-        font-size: 0.85rem;
-        color: #374151;
-        margin-bottom: 6px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="register-container">
-      <div class="brand-logo">🩺 RxLocate</div>
-      <p class="text-center text-muted small mb-4">
-        Partner Network Onboarding
-      </p>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="~{fragments/layout :: meta('Join RxLocate | Pharmacy sign-up', 'Create a partner workspace and publish your pharmacy stock to patients.')}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/auth.css(v=3)}">
+  <link rel="stylesheet" th:href="@{/css/auth-luxury.css(v=3)}">
+</head>
+<body class="auth auth-luxury">
+<th:block th:replace="~{fragments/layout :: icons}"></th:block>
 
-      <form th:action="@{/pharmacy/register}" method="POST">
-        <div class="section-title">Healthcare Provider Info</div>
+<main class="auth__side" id="main">
+  <div class="auth__top">
+    <a class="brand" th:href="@{/}" aria-label="RxLocate home">
+      <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true"><use href="#logo"/></svg>
+      <span>RxLocate</span>
+    </a>
+    <a class="auth__back" th:href="@{/client}"><svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>Find medicine</a>
+  </div>
 
-        <div class="mb-3">
-          <label class="fw-bold">Legal Pharmacy Name</label>
-          <input
-            type="text"
-            name="pharmacyName"
-            class="form-control"
-            placeholder="e.g., Abyssinia Pharma"
-            required
-          />
-        </div>
+  <section class="auth__card auth__card--wide">
+    <span class="eyebrow">Partner onboarding · 1 of 2</span>
+    <h1>Make your pharmacy easy to find</h1>
+    <p>A simple workspace for a pharmacy that wants to be found.</p>
 
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="fw-bold">Operational City</label>
-            <input
-              type="text"
-              name="location"
-              class="form-control"
-              placeholder="eg.Addis Ababa"
-              required
-            />
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="fw-bold">Official Phone</label>
-            <input
-              type="tel"
-              name="phoneNumber"
-              class="form-control"
-              placeholder="+251..."
-              required
-            />
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label class="fw-bold">Business TIN Number</label>
-          <input
-            type="text"
-            name="tinNumber"
-            class="form-control"
-            placeholder="10-digit Tax ID"
-            required
-          />
-        </div>
-
-        <div class="mb-3">
-          <label class="fw-bold">Map Integration (Optional URL)</label>
-          <input
-            type="url"
-            name="googleMapLink"
-            class="form-control"
-            placeholder="https://goo.gl/maps/..."
-          />
-          <div class="form-text" style="font-size: 0.7rem">
-            Paste the "Share" link from Google Maps for patient navigation.
-          </div>
-        </div>
-
-        <div class="section-title">System Credentials</div>
-
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="fw-bold">Admin Username</label>
-            <input
-              type="text"
-              name="username"
-              class="form-control"
-              placeholder="Unique ID"
-              required
-            />
-          </div>
-          <div class="col-md-6 mb-4">
-            <label class="fw-bold">Portal Password</label>
-            <input
-              type="password"
-              name="password"
-              class="form-control"
-              placeholder="••••••••"
-              required
-            />
-          </div>
-        </div>
-
-        <button type="submit" class="btn btn-register w-100 mb-3">
-          Complete Registration
-        </button>
-
-        <div class="text-center pt-3 border-top">
-          <span class="small text-muted">Part of our network? </span>
-          <a
-            th:href="@{/pharmacy/login}"
-            class="small text-decoration-none fw-bold"
-            style="color: var(--rx-teal)"
-            >Sign In Here</a
-          >
-        </div>
-      </form>
+    <div th:if="${error}" class="alert alert--error" role="alert">
+      <svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span th:text="${error}">Please correct the form.</span>
     </div>
-  </body>
+
+    <form class="auth__form" th:action="@{/pharmacy/register}" method="post">
+      <fieldset>
+        <legend>Pharmacy details</legend>
+        <div class="field">
+          <label for="pharmacyName">Pharmacy name</label>
+          <input class="input" id="pharmacyName" type="text" name="pharmacyName" placeholder="Abyssinia Pharmacy" autocomplete="organization" autofocus required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="location">Location</label>
+            <input class="input" id="location" type="text" name="location" placeholder="Bole, Addis Ababa" required>
+          </div>
+          <div class="field">
+            <label for="phoneNumber">Public phone</label>
+            <input class="input" id="phoneNumber" type="tel" name="phoneNumber" placeholder="+251 911 234 567" autocomplete="tel" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="tinNumber">Business TIN</label>
+          <input class="input" id="tinNumber" type="text" name="tinNumber" placeholder="Tax identification number" required>
+        </div>
+        <div class="field">
+          <label for="googleMapLink">Google Maps link <span class="field__hint">(optional, adds a directions button for patients)</span></label>
+          <input class="input" id="googleMapLink" type="url" name="googleMapLink" placeholder="https://maps.google.com/...">
+        </div>
+      </fieldset>
+
+      <div class="divider"></div>
+
+      <fieldset>
+        <legend>Sign-in details</legend>
+        <div class="field-row">
+          <div class="field">
+            <label for="username">Username</label>
+            <input class="input" id="username" type="text" name="username" autocomplete="username" required>
+          </div>
+          <div class="field">
+            <label for="password">Password</label>
+            <div class="input-affix">
+              <input class="input" id="password" type="password" name="password" minlength="8" autocomplete="new-password" placeholder="8 characters or more" required>
+              <button type="button" data-toggle-password="password" aria-label="Show password" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-eye"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <button class="btn btn--primary" type="submit">Create pharmacy account</button>
+    </form>
+
+    <p class="auth__privacy"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><span>Only the details patients need to call and visit are shown publicly.</span></p>
+
+    <p class="auth__switch">Already have an account? <a th:href="@{/pharmacy/login}">Sign in</a></p>
+  </section>
+</main>
+
+<aside class="auth__aside" aria-hidden="true">
+  <div>
+    <h2>Be the pharmacy patients call first.</h2>
+    <p>Your listing appears in search as soon as you add stock. Patients see price, availability and a one-tap call button.</p>
+  </div>
+  <div class="stock-preview">
+    <div class="stock-preview__bar"><svg class="icon"><use href="#i-search"/></svg><strong>ibuprofen</strong><span>2 pharmacies</span></div>
+    <div class="stock-preview__row">
+      <div><strong>Ibuprofen 400mg</strong><small>Your pharmacy, Bole</small></div>
+      <div class="stock-preview__side"><span class="pill"><i></i>In stock</span><b>32.00 ETB</b></div>
+    </div>
+    <div class="stock-preview__row">
+      <div><strong>Ibuprofen 200mg</strong><small>Another partner pharmacy</small></div>
+      <div class="stock-preview__side"><span class="pill pill--low"><i></i>Low stock</span><b>21.00 ETB</b></div>
+    </div>
+  </div>
+</aside>
+
+<script th:src="@{/js/auth.js}" defer></script>
+</body>
 </html>

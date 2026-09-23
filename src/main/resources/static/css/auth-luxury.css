@@ -1,0 +1,26 @@
+/* RxLocate pharmacy auth — quiet luxury, short copy, confident form flow. */
+.auth-luxury { --auth-ink: #1b2622; --auth-muted: #6b7771; --auth-line: #dfe5e0; --auth-teal: #2f6f72; background: #f5f6f3; }
+.auth-luxury .auth__side { padding: 30px clamp(24px, 6vw, 84px) 38px; }
+.auth-luxury .auth__card { max-width: 500px; padding-top: 46px; }
+.auth-luxury .auth__card h1 { color: var(--auth-ink); font-size: clamp(2.8rem, 5vw, 4.4rem); letter-spacing: -.075em; }
+.auth-luxury .auth__card > p:not(.auth__privacy) { max-width: 35ch; color: var(--auth-muted); font-size: .95rem; }
+.auth-luxury .auth__form { gap: 16px; }
+.auth-luxury .auth__form fieldset { gap: 15px; padding: 21px; border: 1px solid var(--auth-line); border-radius: 18px; background: rgba(255,255,255,.65); }
+.auth-luxury .auth__form legend { color: var(--auth-ink); font-size: .9rem; letter-spacing: .01em; text-transform: uppercase; }
+.auth-luxury .auth__form .input { border-color: #c4d0c8; background: rgba(255,255,255,.9); }
+.auth-luxury .auth__form .input:focus { border-color: var(--auth-teal); box-shadow: 0 0 0 4px rgba(47,111,114,.12); }
+.auth-luxury .auth__form .btn { background: var(--auth-ink); box-shadow: none; }
+.auth-luxury .auth__form .btn:hover { background: var(--auth-teal); }
+.auth-luxury .auth__aside { background: radial-gradient(circle at 82% 15%, rgba(117,177,151,.24), transparent 18rem), linear-gradient(145deg, #152d25, #0b6048); }
+.auth-luxury .auth__aside h2 { font-size: clamp(2.4rem, 4.5vw, 4.1rem); }
+.auth-luxury .auth__aside .stock-preview { border: 1px solid rgba(255,255,255,.16); box-shadow: 0 34px 70px -38px rgba(0,0,0,.7); }
+.auth-luxury .auth__aside .stock-preview { color: var(--auth-ink); background: #fff; }
+.auth-luxury .auth__aside .stock-preview__bar { color: var(--auth-muted); background: #fff; border-color: var(--auth-line); }
+.auth-luxury .auth__aside .stock-preview__bar strong, .auth-luxury .auth__aside .stock-preview__row strong { color: var(--auth-ink); }
+.auth-luxury .auth__aside .stock-preview__row { border-color: var(--auth-line); }
+.auth-luxury .auth__aside .stock-preview__row small { color: var(--auth-muted); }
+.auth-luxury .auth__privacy { color: var(--auth-muted); }
+.auth-luxury .auth__privacy .icon { color: var(--auth-teal); }
+.auth-luxury .auth__switch { color: var(--auth-muted); }
+@media (max-width: 900px) { .auth-luxury .auth__card { max-width: 580px; } }
+@media (max-width: 520px) { .auth-luxury .auth__side { padding: 22px 18px 30px; } .auth-luxury .auth__form fieldset { padding: 16px; } }

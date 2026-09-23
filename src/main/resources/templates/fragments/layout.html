@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Shared <head> content. Usage inside <head>:
+     <th:block th:replace="~{fragments/layout :: meta('Page title', 'Page description')}"></th:block> -->
+<th:block th:fragment="meta(title, description)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" th:content="${description}" content="RxLocate">
+  <meta name="theme-color" content="#0A6B4A">
+  <title th:text="${title}">RxLocate</title>
+  <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..700&amp;family=DM+Mono:wght@400;500&amp;family=Instrument+Sans:wght@400..700&amp;family=Noto+Sans+Ethiopic:wght@400..700&amp;display=swap">
+  <link rel="stylesheet" th:href="@{/css/style.css(v=3)}">
+  <script defer th:src="@{/js/ui-polish.js}"></script>
+  <script defer th:src="@{/js/mobile-nav.js(v=1)}"></script>
+</th:block>
+
+<!-- Public site header. `active` is one of: home, find, register, none -->
+<header class="site-header" th:fragment="siteHeader(active)">
+  <div class="container site-header__inner">
+    <a class="brand" th:href="@{/}" aria-label="RxLocate home">
+      <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true"><use href="#logo"/></svg>
+      <span>RxLocate</span>
+    </a>
+    <button class="site-nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" data-site-nav-toggle><svg class="icon"><use href="#i-menu"/></svg></button>
+    <nav class="site-nav" aria-label="Primary" id="siteNav">
+      <a th:href="@{/client}" th:classappend="${active == 'find'} ? 'is-active'">Find medicine</a>
+      <a th:href="@{/pharmacy/register}" th:classappend="${active == 'register'} ? 'is-active'">Pharmacy register</a>
+      <a class="btn btn--primary btn--sm" th:href="@{/pharmacy/login}">Pharmacy login</a>
+    </nav>
+  </div>
+</header>
+
+<footer class="site-footer" th:fragment="siteFooter">
+  <div class="container site-footer__inner">
+    <div>
+      <a class="brand brand--small" th:href="@{/}">
+        <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true"><use href="#logo"/></svg>
+        <span>RxLocate</span>
+      </a>
+      <p>Medicine availability from partner pharmacies in Ethiopia.</p>
+    </div>
+    <nav aria-label="Footer">
+      <a th:href="@{/client}">Find medicine</a>
+      <a th:href="@{/pharmacy/register}">Join as a pharmacy</a>
+      <a th:href="@{/pharmacy/login}">Partner login</a>
+    </nav>
+  </div>
+  <div class="container site-footer__legal">
+    RxLocate is a portfolio project. It does not give medical advice, so ask a licensed pharmacist or clinician about your treatment.
+  </div>
+</footer>
+
+<!-- Icon sprite. Put once at the top of <body>, then use:
+     <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg> -->
+<svg th:fragment="icons" xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="logo" viewBox="0 0 32 32">
+    <rect width="32" height="32" rx="9" fill="currentColor"/>
+    <path transform="translate(4 4)" d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" fill="#fff"/>
+    <path d="M16 10.4v7.2M12.4 14h7.2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+  </symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><path d="M3 11 22 2l-9 19-2-8-8-2z"/></symbol>
+  <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24"><path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><path d="M16 7h6v6"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 19V5M4 19h16"/><path d="m7 15 3-4 3 2 5-7"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.53 13.53 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="m2 2 20 20"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+  <symbol id="i-store" viewBox="0 0 24 24"><path d="m3 9 1.5-5h15L21 9"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12v8h14v-8"/></symbol>
+</svg>
+
+</body>
+</html>

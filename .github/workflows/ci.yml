@@ -1,0 +1,22 @@
+name: RxLocate CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: maven:3.9.11-eclipse-temurin-21
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Test
+        run: mvn -B test
+      - name: Package
+        run: mvn -B -DskipTests package

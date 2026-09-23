@@ -1,309 +1,112 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <title>RxLocate | Inventory Control</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --rx-dark: #00363a;
-        --rx-teal: #006064;
-        --rx-light: #e0f2f1;
-        --rx-danger: #d32f2f;
-      }
-      body {
-        background-color: #f0f2f5;
-        font-family: "Inter", system-ui, sans-serif;
-      }
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="~{fragments/layout :: meta('Pharmacy workspace | RxLocate', 'Manage stock, record sales and keep your availability accurate.')}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/dashboard.css(v=4)}">
+  <link rel="stylesheet" th:href="@{/css/dashboard-luxury.css(v=4)}">
+</head>
+<body class="app">
+<th:block th:replace="~{fragments/layout :: icons}"></th:block>
+<a class="skip-link" href="#main">Skip to content</a>
 
-      /* Horizontal Top Bar instead of just a sidebar */
-      .top-nav {
-        background: var(--rx-dark);
-        color: white;
-        padding: 15px 30px;
-      }
-
-      .stat-card {
-        background: white;
-        border: none;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        border-bottom: 4px solid var(--rx-teal);
-      }
-
-      .control-panel {
-        background: white;
-        border-radius: 12px;
-        padding: 25px;
-        height: 100%;
-        border: 1px solid #e0e0e0;
-      }
-
-      .inventory-table-container {
-        background: white;
-        border-radius: 12px;
-        padding: 0;
-        overflow: hidden;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-      }
-
-      .table thead {
-        background-color: #f8f9fa;
-        border-bottom: 2px solid #edf2f7;
-      }
-      .table th {
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 0.05em;
-        color: #718096;
-        padding: 15px;
-      }
-
-      .status-pill {
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: bold;
-      }
-      .status-good {
-        background: #c6f6d5;
-        color: #22543d;
-      }
-      .status-low {
-        background: #fed7d7;
-        color: #822727;
-      }
-
-      .btn-add {
-        background: var(--rx-teal);
-        color: white;
-        border: none;
-        padding: 12px;
-        border-radius: 8px;
-        width: 100%;
-        font-weight: bold;
-      }
-      .btn-add:hover {
-        background: var(--rx-dark);
-        color: white;
-      }
-    </style>
-  </head>
-  <body>
-    <nav class="top-nav d-flex justify-content-between align-items-center">
-      <h4 class="mb-0 fw-bold">
-        🩺 RxLocate
-        <span class="fw-light ms-2 fs-6 text-info">Pharmacy Hub</span>
-      </h4>
-      <div class="d-flex align-items-center">
-        <span
-          class="me-3 small"
-          th:text="${session.loggedInPharmacy.pharmacyName}"
-          >Kenema Pharmacy</span
-        >
-        <a th:href="@{/pharmacy/logout}" class="btn btn-sm btn-outline-info"
-          >Logout</a
-        >
-      </div>
+<div class="app__shell">
+  <button class="mobile-menu-toggle" type="button" aria-label="Open pharmacy menu" aria-expanded="false" data-mobile-menu-toggle><svg class="icon"><use href="#i-menu"/></svg></button>
+  <div class="mobile-menu-scrim" data-mobile-menu-close></div>
+  <aside class="sidebar" id="pharmacySidebar">
+    <button class="sidebar__close icon-btn" type="button" aria-label="Close pharmacy menu" data-mobile-menu-close><svg class="icon"><use href="#i-x"/></svg></button>
+    <a class="brand" th:href="@{/pharmacy/dashboard}" aria-label="RxLocate home">
+      <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true"><use href="#logo"/></svg><span>RxLocate</span>
+    </a>
+    <div class="sidebar__pharmacy"><span>Workspace</span><strong th:text="${pharmacyName}">Abyssinia Pharmacy</strong><small>Pharmacy operations</small></div>
+    <nav class="sidebar__nav" aria-label="Workspace">
+      <a th:href="@{/pharmacy/dashboard}" th:classappend="${activePage == 'dashboard'} ? ' is-active'" aria-label="Dashboard"><svg class="icon"><use href="#i-dashboard"/></svg><span>Dashboard</span></a>
+      <a th:href="@{/pharmacy/medicines}" th:classappend="${activePage == 'medicines'} ? ' is-active'" aria-label="Medicines"><svg class="icon"><use href="#i-box"/></svg><span>Medicines</span></a>
+      <a th:href="@{/pharmacy/sales}" th:classappend="${activePage == 'sales'} ? ' is-active'" aria-label="Sales"><svg class="icon"><use href="#i-trend"/></svg><span>Sales</span></a>
+      <a th:href="@{/pharmacy/reports}" th:classappend="${activePage == 'reports'} ? ' is-active'" aria-label="Reports"><svg class="icon"><use href="#i-chart"/></svg><span>Reports</span></a>
     </nav>
-
-    <div class="container-fluid p-4">
-      <div class="row mb-4">
-        <div class="col-md-3">
-          <div class="stat-card">
-            <label class="text-muted small fw-bold">TOTAL PRODUCTS</label>
-            <h2 class="fw-bold mb-0" th:text="${#lists.size(medicines)}">0</h2>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="stat-card">
-            <label class="text-muted small fw-bold">SYSTEM STATUS</label>
-            <h2 class="fw-bold mb-0 text-success">ONLINE</h2>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="stat-card" style="border-bottom-color: var(--rx-danger)">
-            <label class="text-muted small fw-bold">LOW STOCK ALERTS</label>
-            <h2 class="fw-bold mb-0 text-danger">CHECK LIST</h2>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-4">
-          <div class="control-panel shadow-sm">
-            <h5 class="fw-bold mb-4">Inventory Entry</h5>
-            <form th:action="@{/pharmacy/add-medicine}" method="POST">
-              <div class="mb-3">
-                <label class="form-label small fw-bold">Medicine Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  class="form-control form-control-lg"
-                  placeholder="e.g. Paracetamol"
-                  required
-                />
-              </div>
-              <div class="row">
-                <div class="col-6 mb-3">
-                  <label class="form-label small fw-bold">Dosage</label>
-                  <input
-                    type="text"
-                    name="dosage"
-                    class="form-control"
-                    placeholder="500mg"
-                    required
-                  />
-                </div>
-                <div class="col-6 mb-3">
-                  <label class="form-label small fw-bold">Origin</label>
-                  <input
-                    type="text"
-                    name="brandCountry"
-                    class="form-control"
-                    placeholder="Ethiopia"
-                    required
-                  />
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-6 mb-3">
-                  <label class="form-label small fw-bold"
-                    >Unit Price (ETB)</label
-                  >
-                  <input
-                    type="number"
-                    step="0.01"
-                    name="price"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <div class="col-6 mb-3">
-                  <label class="form-label small fw-bold">Quantity</label>
-                  <input
-                    type="number"
-                    name="quantity"
-                    class="form-control"
-                    required
-                  />
-                </div>
-              </div>
-              <div class="mb-4">
-                <label class="form-label small fw-bold"
-                  >Batch Expiry Date</label
-                >
-                <input
-                  type="date"
-                  name="expiryDate"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <button type="submit" class="btn btn-add">
-                UPLOAD TO REPOSITORY
-              </button>
-            </form>
-          </div>
-        </div>
-
-        <div class="col-md-8">
-          <div class="inventory-table-container shadow-sm">
-            <table class="table table-hover mb-0">
-              <thead>
-                <tr>
-                  <th>Drug Info</th>
-                  <th>Origin</th>
-                  <th>Pricing</th>
-                  <th>Availability</th>
-                  <th>Expiry</th>
-                  <th>Manage</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr th:each="med : ${medicines}">
-                  <td>
-                    <div class="fw-bold text-dark" th:text="${med.name}">
-                      Drug
-                    </div>
-                    <div class="small text-muted" th:text="${med.dosage}">
-                      Dosage
-                    </div>
-                  </td>
-                  <td class="small" th:text="${med.brandCountry}">Country</td>
-                  <td>
-                    <span class="fw-bold" th:text="${med.price}">0</span>
-                    <small>ETB</small>
-                  </td>
-                  <td class="align-middle">
-                    <div class="d-flex align-items-center">
-                      <a
-                        th:href="@{/medicine/update-quantity/{id}/decrease(id=${med.id})}"
-                        class="btn btn-sm btn-light border shadow-sm px-2 fw-bold"
-                        style="line-height: 1; border-radius: 5px"
-                        >-</a
-                      >
-
-                      <span
-                        class="status-pill mx-2 text-center"
-                        style="min-width: 80px; display: inline-block"
-                        th:classappend="${med.quantity < 10} ? 'status-low' : 'status-good'"
-                        th:text="${med.quantity + ' Units'}"
-                      >
-                      </span>
-
-                      <a
-                        th:href="@{/medicine/update-quantity/{id}/increase(id=${med.id})}"
-                        class="btn btn-sm btn-light border shadow-sm px-2 fw-bold"
-                        style="line-height: 1; border-radius: 5px"
-                        >+</a
-                      >
-                    </div>
-                  </td>
-                  <td
-                    class="small"
-                    th:text="${#temporals.format(med.expiryDate, 'dd/MM/yyyy')}"
-                  >
-                    Date
-                  </td>
-                  <td>
-                    <a
-                      th:href="@{/pharmacy/delete-medicine/{id}(id=${med.id})}"
-                      class="btn btn-sm btn-outline-danger border-0"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        class="bi bi-trash"
-                        viewBox="0 0 16 16"
-                      >
-                        <path
-                          d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
-                        />
-                        <path
-                          fill-rule="evenodd"
-                          d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
-                        />
-                      </svg>
-                    </a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div th:if="${#lists.isEmpty(medicines)}" class="text-center p-5">
-              <p class="text-muted">
-                No records found in current inventory batch.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="sidebar__foot">
+      <a th:href="@{/client}"><svg class="icon"><use href="#i-search"/></svg><span>Patient view</span></a>
+      <a th:href="@{/pharmacy/logout}"><svg class="icon"><use href="#i-logout"/></svg><span>Sign out</span></a>
     </div>
-  </body>
+  </aside>
+
+  <main class="app__main" id="main">
+    <header class="topbar">
+      <div>
+        <p id="today">Pharmacy workspace</p>
+        <h1 th:switch="${activePage}">
+          <span th:case="'medicines'">Medicine inventory</span>
+          <span th:case="'sales'">Sales workspace</span>
+          <span th:case="'reports'">Performance reports</span>
+          <span th:case="*">Good morning, <span th:text="${pharmacyName}">Abyssinia Pharmacy</span></span>
+        </h1>
+        <p class="topbar__sub" th:switch="${activePage}">
+          <span th:case="'medicines'">Keep your catalogue accurate, profitable, and ready for patients.</span>
+          <span th:case="'sales'">Capture every sale and keep stock levels honest in real time.</span>
+          <span th:case="'reports'">A clear view of revenue, margin, and inventory health.</span>
+          <span th:case="*">Here is the latest snapshot of your pharmacy operations.</span>
+        </p>
+      </div>
+      <div class="topbar__actions" th:if="${activePage == 'medicines'}">
+        <button class="btn btn--primary" type="button" data-open-dialog="addMedicine"><svg class="icon"><use href="#i-plus"/></svg>Add medicine</button>
+      </div>
+    </header>
+
+    <div th:if="${success}" class="alert alert--success" role="status" data-autodismiss><svg class="icon"><use href="#i-check"/></svg><span th:text="${success}">Action completed.</span></div>
+    <div th:if="${error}" class="alert alert--error" role="alert"><svg class="icon"><use href="#i-alert"/></svg><span th:text="${error}">Something went wrong.</span></div>
+
+    <section class="page-view" th:if="${activePage == 'dashboard'}" aria-labelledby="overview-title">
+      <div class="section-head section-head--first"><div><span class="eyebrow">Operations overview</span><h2 id="overview-title">Your pharmacy at a glance</h2><p>Today’s numbers across stock and sales.</p></div><a class="text-link" th:href="@{/pharmacy/reports}">View full report <span aria-hidden="true">→</span></a></div>
+      <div class="kpis">
+        <div class="kpi kpi--lead"><span class="kpi__label">Stock value</span><strong class="kpi__value"><span th:text="${#numbers.formatDecimal(retailValue, 1, 'COMMA', 2, 'POINT')}">51,570.00</span><small>ETB</small></strong><span class="kpi__hint" th:text="${totalUnits + ' units across ' + totalProducts + ' products'}">54 units across 3 products</span></div>
+        <div class="kpi"><span class="kpi__label">Sales revenue</span><strong class="kpi__value"><span th:text="${#numbers.formatDecimal(realizedRevenue, 1, 'COMMA', 2, 'POINT')}">1,240.00</span><small>ETB</small></strong><span class="kpi__hint" th:text="${soldUnits + ' units sold to date'}">31 units sold to date</span></div>
+        <div class="kpi"><span class="kpi__label">Gross profit</span><strong class="kpi__value"><span th:text="${#numbers.formatDecimal(realizedGrossProfit, 1, 'COMMA', 2, 'POINT')}">410.00</span><small>ETB</small></strong><span class="kpi__hint">From recorded sales</span></div>
+        <div class="kpi"><span class="kpi__label">Potential profit</span><strong class="kpi__value"><span th:text="${#numbers.formatDecimal(potentialProfit, 1, 'COMMA', 2, 'POINT')}">4,000.00</span><small>ETB</small></strong><span class="kpi__hint" th:text="${#numbers.formatDecimal(marginPercent, 1, 1) + '% margin in stock'}">32% margin in stock</span></div>
+      </div>
+      <div class="dashboard-grid">
+        <div class="panel panel--attention"><div class="panel__head"><div><span class="eyebrow">Action centre</span><h3>Needs your attention</h3></div><span class="panel__meta">Inventory health</span></div>
+          <ul class="attention attention--flat">
+            <li class="attention__row attention__row--low" th:classappend="${lowStockCount == 0} ? 'is-clear'"><span class="attention__dot"></span><div><strong>Low stock</strong><span class="attention__text">Fewer than 10 units left</span></div><span class="attention__count" th:text="${lowStockCount}">1</span><a class="btn btn--outline btn--sm" th:href="@{/pharmacy/medicines?filter=low}">Review</a></li>
+            <li class="attention__row attention__row--out" th:classappend="${outOfStockCount == 0} ? 'is-clear'"><span class="attention__dot"></span><div><strong>Out of stock</strong><span class="attention__text">Hidden from patient search</span></div><span class="attention__count" th:text="${outOfStockCount}">1</span><a class="btn btn--outline btn--sm" th:href="@{/pharmacy/medicines?filter=out}">Review</a></li>
+            <li class="attention__row attention__row--expired" th:classappend="${expiredCount == 0} ? 'is-clear'"><span class="attention__dot"></span><div><strong>Expired</strong><span class="attention__text">Past expiry date</span></div><span class="attention__count" th:text="${expiredCount}">0</span><a class="btn btn--outline btn--sm" th:href="@{/pharmacy/medicines?filter=expired}">Review</a></li>
+          </ul>
+        </div>
+        <div class="panel panel--signal"><div class="panel__head"><div><span class="eyebrow">Recent activity</span><h3>Latest sales</h3></div><a class="text-link" th:href="@{/pharmacy/sales}">See all</a></div><ul class="transactions transactions--compact" th:if="${!#lists.isEmpty(recentSales)}"><li th:each="sale : ${recentSales}"><div class="transaction__icon"><svg class="icon"><use href="#i-trend"/></svg></div><div class="transaction__detail"><strong th:text="${sale.medicine.name}">Paracetamol</strong><small th:text="${sale.quantity + ' units · ' + #temporals.format(sale.soldAt, 'dd MMM, HH:mm')}">2 units · 20 Sep, 14:20</small></div><b th:text="${#numbers.formatDecimal(sale.revenue, 1, 'COMMA', 2, 'POINT') + ' ETB'}">48.00 ETB</b></li></ul><p class="panel__empty" th:if="${#lists.isEmpty(recentSales)}">No sales yet. Recorded sales will appear here.</p></div>
+      </div>
+      <div class="quick-actions"><div><span class="eyebrow">Quick actions</span><h3>Keep the day moving</h3></div><div class="quick-actions__list"><a class="quick-action" th:href="@{/pharmacy/medicines}"><span class="quick-action__icon quick-action__icon--mint"><svg class="icon"><use href="#i-box"/></svg></span><span><strong>Review inventory</strong><small>Check stock and expiry dates</small></span><span aria-hidden="true">→</span></a><a class="quick-action" th:href="@{/pharmacy/sales}"><span class="quick-action__icon quick-action__icon--amber"><svg class="icon"><use href="#i-plus"/></svg></span><span><strong>Record a sale</strong><small>Update stock instantly</small></span><span aria-hidden="true">→</span></a><a class="quick-action" th:href="@{/pharmacy/reports}"><span class="quick-action__icon quick-action__icon--blue"><svg class="icon"><use href="#i-chart"/></svg></span><span><strong>Open reports</strong><small>Understand your performance</small></span><span aria-hidden="true">→</span></a></div></div>
+    </section>
+
+    <section class="page-view" th:if="${activePage == 'medicines'}" aria-labelledby="medicines-title">
+      <div class="section-head section-head--first"><div><span class="eyebrow">Catalogue management</span><h2 id="medicines-title">All medicines</h2><p th:text="${totalProducts + ' products · ' + totalUnits + ' units on hand'}">3 products · 54 units on hand</p></div></div>
+      <div class="inventory-summary"><div><span class="summary-label">Retail value</span><strong th:text="${#numbers.formatDecimal(retailValue, 1, 'COMMA', 2, 'POINT') + ' ETB'}">51,570.00 ETB</strong></div><div><span class="summary-label">Low stock</span><strong class="text-amber" th:text="${lowStockCount}">1</strong><small>products to replenish</small></div><div><span class="summary-label">Expired</span><strong class="text-red" th:text="${expiredCount}">0</strong><small>products to remove</small></div><div><span class="summary-label">Avg. margin</span><strong th:text="${#numbers.formatDecimal(marginPercent, 1, 1) + '%'}">32.0%</strong><small>across current stock</small></div></div>
+      <div class="table-tools"><div class="search-field"><svg class="icon"><use href="#i-search"/></svg><input class="input" id="inventorySearch" type="search" placeholder="Search by medicine name" aria-label="Filter inventory by name" autocomplete="off"></div><div class="segmented" id="inventoryFilter" role="group" aria-label="Filter by status"><button type="button" data-filter="all" aria-pressed="true">All</button><button type="button" data-filter="low" aria-pressed="false">Low stock</button><button type="button" data-filter="out" aria-pressed="false">Out of stock</button><button type="button" data-filter="expired" aria-pressed="false">Expired</button></div></div>
+      <div class="table-wrap"><table class="table" id="inventoryTable"><thead><tr><th>Medicine</th><th>Unit price</th><th>Margin</th><th>Stock level</th><th>Expiry</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody><tr th:each="med : ${medicines}" th:attr="data-stock=${med.quantity == 0 ? 'out' : (med.quantity < 10 ? 'low' : 'good')},data-expired=${med.expiryDate != null and med.expiryDate.isBefore(#temporals.createToday())}"><td class="cell-main"><div class="cell-name" th:text="${med.name}">Paracetamol</div><div class="cell-sub" th:text="${(med.dosage != null ? med.dosage : 'No dosage') + (med.brandCountry != null ? ' · ' + med.brandCountry : '')}">500mg · Ethiopia</div></td><td data-label="Price" class="num"><strong th:text="${#numbers.formatDecimal(med.price, 1, 'COMMA', 2, 'POINT') + ' ETB'}">24.00 ETB</strong><div class="cell-sub" th:text="${'Cost ' + #numbers.formatDecimal(med.costPrice, 1, 'COMMA', 2, 'POINT') + ' ETB'}">Cost 16.00 ETB</div></td><td data-label="Margin"><span class="margin-tag" th:text="${#numbers.formatDecimal(med.price - med.costPrice, 1, 'COMMA', 2, 'POINT') + ' ETB'}">8.00 ETB</span></td><td data-label="Stock"><div class="stock-cell"><div class="stepper"><form th:action="@{/medicine/update-quantity/{id}/decrease(id=${med.id})}" method="post"><button type="submit" aria-label="Decrease quantity" th:disabled="${med.quantity == 0}"><svg class="icon"><use href="#i-minus"/></svg></button></form><b th:text="${med.quantity}" th:classappend="${med.quantity == 0 ? 'is-out' : (med.quantity < 10 ? 'is-low' : '')}">48</b><form th:action="@{/medicine/update-quantity/{id}/increase(id=${med.id})}" method="post"><button type="submit" aria-label="Increase quantity"><svg class="icon"><use href="#i-plus"/></svg></button></form></div><span class="pill pill--low" th:if="${med.quantity > 0 and med.quantity < 10}">Low</span><span class="pill pill--out" th:if="${med.quantity == 0}">Out</span></div></td><td data-label="Expires"><div class="expiry-cell"><span th:text="${med.expiryDate != null ? #temporals.format(med.expiryDate, 'dd MMM yyyy') : 'Not set'}">30 Mar 2027</span><span class="pill pill--out" th:if="${med.expiryDate != null and med.expiryDate.isBefore(#temporals.createToday())}">Expired</span><span class="pill pill--low" th:if="${med.expiryDate != null and !med.expiryDate.isBefore(#temporals.createToday()) and med.expiryDate.isBefore(#temporals.createToday().plusDays(90))}">Soon</span></div></td><td class="cell-actions"><form th:action="@{/pharmacy/delete-medicine/{id}(id=${med.id})}" method="post" data-confirm="Remove this medicine from your inventory?"><button class="icon-btn icon-btn--danger" type="submit" aria-label="Remove medicine" title="Remove medicine"><svg class="icon"><use href="#i-trash"/></svg></button></form></td></tr></tbody></table><div class="table-empty" th:if="${#lists.isEmpty(medicines)}"><strong>Your catalogue is empty</strong><span>Add your first medicine to make it searchable by patients.</span><button class="btn btn--primary" type="button" data-open-dialog="addMedicine"><svg class="icon"><use href="#i-plus"/></svg>Add medicine</button></div><div class="table-empty" id="inventoryEmpty" hidden><strong>No medicines match</strong><span>Try a different name or status filter.</span></div></div>
+    </section>
+
+    <section class="page-view" th:if="${activePage == 'sales'}" aria-labelledby="sales-title">
+      <div class="section-head section-head--first"><div><span class="eyebrow">Revenue capture</span><h2 id="sales-title">Sales activity</h2><p>Record a transaction and stock updates automatically.</p></div><div class="metric-chip"><span>All-time revenue</span><strong th:text="${#numbers.formatDecimal(realizedRevenue, 1, 'COMMA', 2, 'POINT') + ' ETB'}">1,240.00 ETB</strong></div></div>
+      <div class="sales-layout"><div class="panel panel--form"><div class="panel__body"><span class="eyebrow">New transaction</span><h3>Record a sale</h3><p class="panel__sub">Prices are captured at the moment of sale.</p><form class="stack" id="saleForm" th:action="@{/pharmacy/record-sale}" method="post"><div class="field"><label for="medicineId">Medicine</label><select class="select" id="medicineId" name="medicineId" required><option value="">Choose a medicine</option><option th:each="med : ${medicines}" th:value="${med.id}" th:attr="data-stock=${med.quantity}" th:disabled="${med.quantity == 0}" th:text="${med.name + (med.dosage != null ? ' ' + med.dosage : '') + ' (' + med.quantity + ' in stock)'}">Paracetamol 500mg (48 in stock)</option></select></div><div class="field"><label for="saleQuantity">Quantity sold</label><input class="input" id="saleQuantity" type="number" name="quantity" min="1" placeholder="1" required><span class="field__hint" id="saleHint" aria-live="polite">Pick a medicine to see how many are available.</span></div><button class="btn btn--primary" type="submit">Record sale <svg class="icon"><use href="#i-arrow"/></svg></button></form></div></div><div class="panel"><div class="panel__head"><div><span class="eyebrow">Transaction log</span><h3>Recent sales</h3></div><span th:text="${soldUnits + ' units sold'}">31 units sold</span></div><ul class="transactions" th:if="${!#lists.isEmpty(recentSales)}"><li th:each="sale : ${recentSales}"><div class="transaction__icon transaction__icon--amber"><svg class="icon"><use href="#i-check"/></svg></div><div class="transaction__detail"><strong th:text="${sale.medicine.name}">Paracetamol</strong><small th:text="${sale.quantity + (sale.quantity == 1 ? ' unit · ' : ' units · ') + #temporals.format(sale.soldAt, 'dd MMM yyyy, HH:mm')}">2 units · 20 Sep 2026, 14:20</small></div><div class="transaction__amount"><b th:text="${#numbers.formatDecimal(sale.revenue, 1, 'COMMA', 2, 'POINT') + ' ETB'}">48.00 ETB</b><small th:text="${'+' + #numbers.formatDecimal(sale.grossProfit, 1, 'COMMA', 2, 'POINT') + ' profit'}">+16.00 profit</small></div></li></ul><p class="panel__empty" th:if="${#lists.isEmpty(recentSales)}">No sales yet. Sales you record will appear here.</p></div></div>
+      <div class="sales-note"><svg class="icon"><use href="#i-shield"/></svg><div><strong>Inventory stays synchronized</strong><p>Every recorded sale reduces stock immediately and stores the selling price and cost for accurate margin reporting.</p></div></div>
+    </section>
+
+    <section class="page-view" th:if="${activePage == 'reports'}" aria-labelledby="reports-title">
+      <div class="section-head section-head--first"><div><span class="eyebrow">Business intelligence</span><h2 id="reports-title">Performance report</h2><p th:text="${reportRange == 'all' ? 'Full history across recorded sales.' : reportMonthLabel + ' sales performance.'}">September sales performance.</p></div><div class="report-period" role="group" aria-label="Report period" th:attr="data-active-range=${reportRange}"><a th:classappend="${reportRange == 'month'} ? 'is-active'" th:attr="aria-current=${reportRange == 'month' ? 'page' : null}" th:href="@{/pharmacy/reports(range='month')}">This month</a><a th:classappend="${reportRange == 'all'} ? 'is-active'" th:attr="aria-current=${reportRange == 'all' ? 'page' : null}" th:href="@{/pharmacy/reports(range='all')}">All time</a></div></div>
+      <div class="report-hero"><div><span class="eyebrow eyebrow--light">Realized revenue</span><strong th:text="${#numbers.formatDecimal(reportRevenue, 1, 'COMMA', 2, 'POINT') + ' ETB'}">1,240.00 ETB</strong><p th:text="${reportUnits + ' units sold · ' + #numbers.formatDecimal(reportProfit, 1, 'COMMA', 2, 'POINT') + ' ETB gross profit'}">31 units sold · 410.00 ETB gross profit</p></div><div class="report-hero__stat"><span>Gross margin</span><strong th:text="${reportRevenue == 0 ? '0.0%' : #numbers.formatDecimal((reportProfit / reportRevenue) * 100, 1, 1) + '%'}">33.1%</strong><small>on realized sales</small></div></div>
+      <div class="report-grid"><div class="panel"><div class="panel__head"><div><span class="eyebrow">Sales pulse</span><h3>Recent revenue by transaction</h3></div><span>ETB</span></div><div class="bar-chart" th:if="${!#lists.isEmpty(reportSales)}"><div class="bar-row" th:each="sale : ${reportSales}"><div class="bar-label"><span th:text="${#temporals.format(sale.soldAt, 'dd MMM')}">20 Sep</span><strong th:text="${sale.medicine.name}">Paracetamol</strong></div><div class="bar-track"><span class="bar-fill" th:style="|width: ${(sale.revenue / reportMaxRevenue) * 100}%|" ></span></div><b th:text="${#numbers.formatDecimal(sale.revenue, 1, 'COMMA', 2, 'POINT')}">48.00</b></div></div><p class="panel__empty" th:if="${#lists.isEmpty(reportSales)}">No sales in this period.</p></div><div class="panel"><div class="panel__head"><div><span class="eyebrow">Inventory mix</span><h3>Stock value by medicine</h3></div><span th:text="${totalProducts + ' products'}">3 products</span></div><div class="inventory-bars" th:if="${!#lists.isEmpty(medicines)}"><div class="inventory-bar" th:each="med : ${medicines}"><div><strong th:text="${med.name}">Paracetamol</strong><span th:text="${#numbers.formatDecimal(med.price * med.quantity, 1, 'COMMA', 2, 'POINT') + ' ETB'}">1,152.00 ETB</span></div><div class="bar-track"><span class="bar-fill bar-fill--mint" th:style="|width: ${(med.price * med.quantity / maxRetailLineValue) * 100}%|" ></span></div></div></div><p class="panel__empty" th:if="${#lists.isEmpty(medicines)}">Add medicines to see your inventory mix.</p></div></div>
+      <div class="panel report-growth"><div class="panel__head"><div><span class="eyebrow">Sales growth</span><h3>Revenue by day</h3></div><span th:text="${reportRange == 'all' ? 'All time' : reportMonthLabel}">September</span></div><div class="growth-chart" th:if="${!#lists.isEmpty(reportSales)}"><div class="growth-axis"><span>Revenue</span><span>Time</span></div><div class="growth-bars"><div class="growth-bar" th:each="day : ${dailyRevenue}" th:style="|--growth: ${(day.revenue / reportMaxRevenue) * 100}%|" th:title="${#temporals.format(day.date, 'dd MMM') + ' · ' + #numbers.formatDecimal(day.revenue, 1, 'COMMA', 2, 'POINT') + ' ETB'}"><span></span></div></div><div class="growth-labels"><span th:each="day : ${dailyRevenue}" th:text="${#temporals.format(day.date, 'dd MMM')}">23 Sep</span></div></div><p class="panel__empty" th:if="${#lists.isEmpty(reportSales)}">Record sales to build your growth trend.</p></div>
+      <div class="report-metrics"><div><span class="summary-label">Inventory cost</span><strong th:text="${#numbers.formatDecimal(inventoryCost, 1, 'COMMA', 2, 'POINT') + ' ETB'}">47,570.00 ETB</strong><small>capital currently in stock</small></div><div><span class="summary-label">Potential upside</span><strong th:text="${#numbers.formatDecimal(potentialProfit, 1, 'COMMA', 2, 'POINT') + ' ETB'}">4,000.00 ETB</strong><small>if current stock sells</small></div><div><span class="summary-label">Availability risk</span><strong th:text="${lowStockCount + outOfStockCount + expiredCount}">2</strong><small>items needing attention</small></div></div>
+    </section>
+    <p class="fineprint">RxLocate keeps patient availability, inventory value, and recorded sales connected. Financial figures are operational estimates before taxes, wastage, and running costs.</p>
+  </main>
+  <nav class="mobile-bottom-nav" aria-label="Primary pharmacy navigation">
+    <a th:href="@{/pharmacy/dashboard}" th:classappend="${activePage == 'dashboard'} ? ' is-active'"><svg class="icon"><use href="#i-dashboard"/></svg><span>Home</span></a>
+    <a th:href="@{/pharmacy/medicines}" th:classappend="${activePage == 'medicines'} ? ' is-active'"><svg class="icon"><use href="#i-box"/></svg><span>Stock</span></a>
+    <a th:href="@{/pharmacy/sales}" th:classappend="${activePage == 'sales'} ? ' is-active'"><svg class="icon"><use href="#i-trend"/></svg><span>Sales</span></a>
+    <a th:href="@{/pharmacy/reports}" th:classappend="${activePage == 'reports'} ? ' is-active'"><svg class="icon"><use href="#i-chart"/></svg><span>Reports</span></a>
+  </nav>
+</div>
+
+<dialog class="modal" id="addMedicine" aria-labelledby="addMedicineTitle"><div class="modal__head"><div><h2 id="addMedicineTitle">Add a medicine</h2><p>Patients see the name, dosage, price and quantity once it is saved.</p></div><button class="icon-btn" type="button" data-close-dialog aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button></div><form class="modal__form" id="addMedicineForm" th:action="@{/pharmacy/add-medicine}" method="post"><div class="field field--wide"><label for="name">Medicine name</label><input class="input" id="name" type="text" name="name" placeholder="Paracetamol" required></div><div class="field"><label for="dosage">Dosage</label><input class="input" id="dosage" type="text" name="dosage" placeholder="500mg" required></div><div class="field"><label for="brandCountry">Country of origin</label><input class="input" id="brandCountry" type="text" name="brandCountry" placeholder="Ethiopia" required></div><div class="field"><label for="costPrice">Cost per unit (ETB)</label><input class="input" id="costPrice" type="number" step="0.01" min="0" name="costPrice" placeholder="16.00" required></div><div class="field"><label for="price">Selling price per unit (ETB)</label><input class="input" id="price" type="number" step="0.01" min="0" name="price" placeholder="24.00" required></div><div class="field"><label for="quantity">Quantity</label><input class="input" id="quantity" type="number" min="0" name="quantity" placeholder="50" required></div><div class="field"><label for="expiryDate">Expiry date</label><input class="input" id="expiryDate" type="date" name="expiryDate" required></div><div class="modal__actions"><button class="btn btn--outline" type="button" data-close-dialog>Cancel</button><button class="btn btn--primary" type="submit">Add to inventory</button></div></form></dialog>
+<script th:src="@{/js/dashboard.js}" defer></script>
+</body>
 </html>

@@ -1,159 +1,73 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Pharmacy Login | RxLocate</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --rx-teal: #006064;
-        --rx-dark: #00363a;
-      }
-      body {
-        background: radial-gradient(
-          circle at center,
-          var(--rx-teal) 0%,
-          var(--rx-dark) 100%
-        );
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: "Segoe UI", sans-serif;
-        margin: 0;
-      }
-      .login-card {
-        background: rgba(255, 255, 255, 1);
-        padding: 45px;
-        border-radius: 25px;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-        width: 100%;
-        max-width: 420px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-      .logo-icon {
-        font-size: 3rem;
-        margin-bottom: 10px;
-        display: block;
-      }
-      .form-control {
-        background: #f1f5f9;
-        border: 2px solid transparent;
-        border-radius: 12px;
-        padding: 12px 15px;
-        transition: 0.3s;
-      }
-      .form-control:focus {
-        background: white;
-        border-color: var(--rx-teal);
-        box-shadow: none;
-      }
-      .btn-rx-login {
-        background: var(--rx-teal);
-        border: none;
-        padding: 14px;
-        border-radius: 12px;
-        font-weight: 800;
-        color: white;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        transition: 0.3s;
-        margin-top: 10px;
-      }
-      .btn-rx-login:hover {
-        background: var(--rx-dark);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        color: white;
-      }
-      .register-link {
-        color: var(--rx-teal);
-        font-weight: 700;
-        text-decoration: none;
-      }
-      .register-link:hover {
-        color: var(--rx-dark);
-        text-decoration: underline;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="login-card">
-      <div class="text-center mb-5">
-        <span class="logo-icon">🩺</span>
-        <h2 class="fw-bold" style="color: var(--rx-dark); letter-spacing: -1px">
-          RxLocate
-        </h2>
-        <p class="text-muted small fw-bold text-uppercase">
-          Pharmacist Authentication
-        </p>
-      </div>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="~{fragments/layout :: meta('Partner login | RxLocate', 'Sign in to your RxLocate pharmacy workspace.')}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/auth.css(v=3)}">
+  <link rel="stylesheet" th:href="@{/css/auth-luxury.css(v=3)}">
+</head>
+<body class="auth auth-luxury">
+<th:block th:replace="~{fragments/layout :: icons}"></th:block>
 
-      <div
-        th:if="${param.registered}"
-        class="alert alert-success border-0 rounded-3 py-2 small fw-bold text-center"
-        role="alert"
-      >
-        ✓ Registration verified. Please sign in.
-      </div>
+<main class="auth__side" id="main">
+  <div class="auth__top">
+    <a class="brand" th:href="@{/}" aria-label="RxLocate home">
+      <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true"><use href="#logo"/></svg>
+      <span>RxLocate</span>
+    </a>
+    <a class="auth__back" th:href="@{/client}"><svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>Find medicine</a>
+  </div>
 
-      <div
-        th:if="${error}"
-        class="alert alert-danger border-0 rounded-3 py-2 small fw-bold text-center"
-        role="alert"
-      >
-        ⚠ Invalid credentials. Try again.
-      </div>
+  <section class="auth__card">
+    <span class="eyebrow">Partner workspace</span>
+    <h1>Welcome back</h1>
+    <p>Keep your stock visible and your pharmacy easy to find.</p>
 
-      <form th:action="@{/pharmacy/login}" method="POST">
-        <div class="mb-3">
-          <label class="form-label small fw-bold text-secondary"
-            >Authorized Username</label
-          >
-          <input
-            type="text"
-            name="username"
-            class="form-control"
-            placeholder="e.g. kenema_admin"
-            required
-          />
-        </div>
-        <div class="mb-4">
-          <label class="form-label small fw-bold text-secondary"
-            >Secure Password</label
-          >
-          <input
-            type="password"
-            name="password"
-            class="form-control"
-            placeholder="••••••••"
-            required
-          />
-        </div>
-        <button type="submit" class="btn btn-rx-login w-100">
-          Access Inventory Panel
-        </button>
-      </form>
-
-      <div class="mt-5 text-center">
-        <p class="small text-muted mb-4">
-          Unregistered facility?
-          <a th:href="@{/pharmacy/register}" class="register-link"
-            >Create Account</a
-          >
-        </p>
-        <div class="pt-3 border-top">
-          <a
-            th:href="@{/}"
-            class="text-secondary small text-decoration-none fw-bold"
-          >
-            ← Return to Public Portal
-          </a>
-        </div>
-      </div>
+    <div th:if="${success}" class="alert alert--success" role="status">
+      <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span th:text="${success}">Registration complete. You can now sign in.</span>
     </div>
-  </body>
+    <div th:if="${error}" class="alert alert--error" role="alert">
+      <svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span th:text="${error}">Invalid username or password.</span>
+    </div>
+
+    <form class="auth__form" th:action="@{/pharmacy/login}" method="post">
+      <div class="field">
+        <label for="username">Username</label>
+        <input class="input" id="username" type="text" name="username" autocomplete="username" autofocus required>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="input-affix">
+          <input class="input" id="password" type="password" name="password" autocomplete="current-password" required>
+          <button type="button" data-toggle-password="password" aria-label="Show password" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-eye"/></svg></button>
+        </div>
+      </div>
+      <button class="btn btn--primary" type="submit">Sign in</button>
+    </form>
+
+    <p class="auth__privacy"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><span>Private workspace · simple stock updates · clear patient listings.</span></p>
+
+    <p class="auth__switch">New to RxLocate? <a th:href="@{/pharmacy/register}">Create a pharmacy account</a></p>
+  </section>
+</main>
+
+<aside class="auth__aside" aria-hidden="true">
+  <div>
+    <h2>Patients see your stock the moment you update it.</h2>
+    <p>Change a quantity, record a sale, and the finder reflects it straight away.</p>
+  </div>
+  <div class="stock-preview">
+    <div class="stock-preview__bar"><svg class="icon"><use href="#i-box"/></svg><strong>Stock on hand</strong><span>Live</span></div>
+    <div class="stock-preview__row">
+      <div><strong>Paracetamol 500mg</strong><small>24.00 ETB</small></div>
+      <div class="stepper-static"><span><svg class="icon"><use href="#i-minus"/></svg></span><b>48</b><span><svg class="icon"><use href="#i-plus"/></svg></span></div>
+    </div>
+    <div class="stock-preview__row">
+      <div><strong>Amoxicillin 250mg</strong><small>85.00 ETB</small></div>
+      <div class="stock-preview__side"><span class="pill pill--low"><i></i>Low stock</span></div>
+    </div>
+  </div>
+</aside>
+
+<script th:src="@{/js/auth.js}" defer></script>
+</body>
 </html>

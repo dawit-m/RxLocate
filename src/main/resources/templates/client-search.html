@@ -1,235 +1,62 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Find Medicine | RxLocate</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --rx-teal: #006064;
-        --rx-dark: #00363a;
-        --rx-soft: #f8fafc;
-      }
-      body {
-        background-color: #f4f7f6;
-        font-family: "Segoe UI", Tahoma, sans-serif;
-      }
-      .navbar {
-        background-color: var(--rx-dark) !important;
-        padding: 15px 0;
-      }
-      .search-hero {
-        background: white;
-        padding: 60px 0;
-        border-bottom: 1px solid #e0e0e0;
-        margin-bottom: 40px;
-      }
-      .btn-search {
-        background-color: var(--rx-teal);
-        color: white;
-        font-weight: bold;
-      }
-      .btn-search:hover {
-        background-color: var(--rx-dark);
-        color: white;
-      }
-      .med-card {
-        border: none;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        background: white;
-        padding: 25px;
-        margin-bottom: 25px;
-        border-top: 4px solid var(--rx-teal);
-        height: 100%;
-      }
-      .price-tag {
-        font-size: 1.25rem;
-        font-weight: 800;
-        color: var(--rx-dark);
-      }
-      .label-text {
-        color: #94a3b8;
-        font-size: 0.7rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        display: block;
-        margin-bottom: 2px;
-      }
-      details summary {
-        list-style: none;
-        display: block;
-        background-color: #f1f5f9;
-        color: var(--rx-teal);
-        padding: 10px;
-        border-radius: 8px;
-        text-align: center;
-        cursor: pointer;
-        font-weight: 700;
-        border: 1px solid #e2e8f0;
-        font-size: 0.85rem;
-      }
-      .info-box {
-        background-color: #fcfcfc;
-        border-radius: 12px;
-        padding: 15px;
-        margin-top: 10px;
-        border: 1px solid #eee;
-      }
-      .map-btn {
-        display: block;
-        background-color: #0288d1;
-        color: white;
-        text-align: center;
-        padding: 10px;
-        border-radius: 8px;
-        text-decoration: none;
-        margin-top: 10px;
-        font-weight: 700;
-        font-size: 0.85rem;
-      }
-    </style>
-  </head>
-  <body>
-    <nav class="navbar navbar-dark shadow-sm">
-      <div class="container">
-        <a class="navbar-brand fw-bold" href="/">🩺 RxLocate</a>
-      </div>
-    </nav>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="~{fragments/layout :: meta('Find medicine | RxLocate', 'Find nearby medicine availability and pharmacy details.')}" />
+  <link rel="stylesheet" th:href="@{/css/search-luxury.css(v=2)}" />
+</head>
+<body class="page search-luxury">
+<th:block th:replace="~{fragments/layout :: icons}" />
+<a class="skip-link" href="#main">Skip to content</a>
+<th:block th:replace="~{fragments/layout :: siteHeader('find')}" />
 
-    <div class="search-hero text-center">
-      <div class="container">
-        <h1 class="fw-bold mb-2">Medicine Finder</h1>
-        <p class="text-muted fs-5">
-          Check real-time availability in your local pharmacies.
-        </p>
-
-        <form
-          th:action="@{/client/search}"
-          method="GET"
-          class="row justify-content-center mt-4"
-        >
-          <div class="col-md-7">
-            <div class="input-group input-group-lg shadow-sm">
-              <input
-                type="text"
-                name="name"
-                class="form-control border-0"
-                placeholder="Enter medicine name..."
-                th:value="${searchQuery}"
-                required
-              />
-              <button class="btn btn-search px-5" type="submit">Search</button>
-            </div>
-          </div>
-        </form>
-      </div>
+<main id="main">
+  <section class="search-luxury__hero" data-reveal>
+    <div class="container search-luxury__hero-inner">
+      <span class="eyebrow">Medicine finder</span>
+      <h1>Find it nearby.</h1>
+      <p>Search local pharmacies before you make the trip.</p>
+      <form class="search-luxury__form" th:action="@{/client/search}" method="get" role="search">
+        <span class="search-luxury__form-icon"><svg class="icon" aria-hidden="true"><use href="#i-search" /></svg></span>
+        <label class="sr-only" for="medicineSearch">Medicine, strength, or brand</label>
+        <input id="medicineSearch" type="search" name="name" placeholder="Medicine, strength, or brand" aria-label="Medicine, strength, or brand" th:value="${searchQuery}" autocomplete="off" required />
+        <button class="search-luxury__clear icon-btn" type="button" data-clear-search aria-label="Clear search" title="Clear search"><svg class="icon"><use href="#i-x" /></svg></button>
+        <button class="btn btn--primary" type="submit">Search <svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg></button>
+      </form>
+      <div class="search-luxury__suggestions" aria-label="Suggested searches"><span>Try</span><a th:href="@{/client/search(name='paracetamol')}">Paracetamol</a><a th:href="@{/client/search(name='amoxicillin')}">Amoxicillin</a><a th:href="@{/client/search(name='ibuprofen')}">Ibuprofen</a></div>
     </div>
+  </section>
 
-    <div class="container pb-5">
-      <div
-        class="row"
-        th:if="${medicines != null and !#lists.isEmpty(medicines)}"
-      >
-        <div class="col-md-4 mb-4" th:each="med : ${medicines}">
-          <div class="med-card">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-              <div>
-                <h4 class="fw-bold mb-0 text-dark" th:text="${med.name}">
-                  Medicine
-                </h4>
-                <div
-                  class="text-muted fw-bold small"
-                  th:text="${med.dosage != null and med.dosage != '' ? med.dosage : 'Dosage Unknown'}"
-                ></div>
-              </div>
-              <div class="text-end">
-                <span class="price-tag" th:text="${med.price}">0.00</span>
-                <small
-                  class="fw-bold d-block text-muted"
-                  style="font-size: 0.65rem"
-                  >ETB</small
-                >
-              </div>
-            </div>
-
-            <hr class="text-light" />
-
-            <div class="row mb-4">
-              <div class="col-6">
-                <span class="label-text">Brand Origin</span>
-                <p class="mb-0 fw-bold text-dark small">
-                  🌍
-                  <span
-                    th:text="${med.brandCountry != null and med.brandCountry != '' ? med.brandCountry : 'Unknown'}"
-                  ></span>
-                </p>
-              </div>
-              <div class="col-6 text-end">
-                <span class="label-text">Status</span>
-                <p class="mb-0 text-success fw-bold small">✓ In Stock</p>
-              </div>
-            </div>
-
-            <div class="mb-4">
-              <span class="label-text">Pharmacy</span>
-              <p
-                class="mb-0 text-dark fw-bold"
-                th:text="${med.pharmacy.pharmacyName}"
-              >
-                Kenema
-              </p>
-              <p class="text-muted small" th:text="${med.pharmacy.location}">
-                Addis Ababa
-              </p>
-            </div>
-
-            <details>
-              <summary>View Contact Info</summary>
-              <div class="info-box text-center">
-                <span class="label-text">Phone Number</span>
-                <p class="mb-2">
-                  <a
-                    th:href="'tel:' + ${med.pharmacy.phoneNumber}"
-                    class="text-dark fw-bold text-decoration-none fs-5"
-                    th:text="${med.pharmacy.phoneNumber}"
-                    >+251...</a
-                  >
-                </p>
-                <div
-                  th:if="${med.pharmacy.googleMapLink != null and !med.pharmacy.googleMapLink.isEmpty()}"
-                >
-                  <a
-                    th:href="${med.pharmacy.googleMapLink}"
-                    target="_blank"
-                    class="map-btn"
-                  >
-                    📍 Open in Google Maps
-                  </a>
-                </div>
-              </div>
-            </details>
+  <section class="search-luxury__results" data-reveal>
+    <div class="container">
+      <th:block th:if="${searchQuery != null and !searchQuery.isBlank() and !#lists.isEmpty(medicines)}">
+        <div class="search-luxury__result-head">
+          <div><span class="eyebrow">Nearby matches</span><h2><span th:text="${resultCount}">4</span> <span th:text="${resultCount == 1 ? 'listing' : 'listings'}">listings</span></h2><p>For <strong th:text="${searchQuery}">paracetamol</strong></p></div>
+          <div class="search-luxury__controls">
+            <div class="segmented" role="group" aria-label="Filter by stock" id="stockFilter"><button type="button" data-filter="all" aria-pressed="true">All</button><button type="button" data-filter="good" aria-pressed="false">In stock</button><button type="button" data-filter="low" aria-pressed="false">Limited</button></div>
+            <label class="sr-only" for="sortResults">Sort results</label><select class="select select--sm" id="sortResults"><option value="relevance">Recommended</option><option value="price-low">Price: low first</option><option value="price-high">Price: high first</option><option value="stock-high">Most available</option></select>
           </div>
         </div>
-      </div>
 
-      <div
-        th:if="${searchQuery != null and #lists.isEmpty(medicines)}"
-        class="text-center mt-5 py-5 bg-white rounded-4 shadow-sm"
-      >
-        <h3 class="text-muted">
-          No results for "<span th:text="${searchQuery}"></span>"
-        </h3>
-        <p>Double check the spelling or try another medicine.</p>
-        <a href="/client/search" class="btn btn-outline-secondary btn-sm mt-2"
-          >Clear Search</a
-        >
-      </div>
+        <p id="finderStatus" class="sr-only" role="status" aria-live="polite"></p>
+        <ul class="search-luxury__list" id="resultsList">
+          <li class="search-luxury__item" th:each="med : ${medicines}" th:attr="data-price=${med.price},data-stock=${med.quantity},data-status=${med.quantity >= 10 ? 'good' : (med.quantity > 0 ? 'low' : 'out')}">
+            <div class="search-luxury__item-main"><div class="search-luxury__item-title"><h3 th:text="${med.name}">Paracetamol</h3><span th:text="${med.dosage != null and !med.dosage.isBlank() ? med.dosage : 'Dosage not listed'}">500mg</span></div><div class="search-luxury__pharmacy"><strong th:text="${med.pharmacy.pharmacyName}">Abyssinia Pharmacy</strong><span><svg class="icon" aria-hidden="true"><use href="#i-pin" /></svg><span th:text="${med.pharmacy.location}">Bole, Addis Ababa</span></span></div></div>
+            <div class="search-luxury__availability"><span class="status status--good" th:if="${med.quantity >= 10}">In stock</span><span class="status status--limited" th:if="${med.quantity > 0 and med.quantity < 10}">Limited stock</span><span class="status status--out" th:if="${med.quantity == 0}">Unavailable</span><small th:if="${med.quantity > 0}" th:text="${med.quantity + ' units available'}">48 units available</small></div>
+            <div class="search-luxury__price"><b th:text="${#numbers.formatDecimal(med.price, 1, 'COMMA', 2, 'POINT')}">24.00</b><span>ETB</span></div>
+            <div class="search-luxury__actions"><a class="btn btn--primary btn--sm search-phone-action" th:href="'tel:' + ${med.pharmacy.phoneNumber}" th:attr="data-phone=${med.pharmacy.phoneNumber},data-pharmacy=${med.pharmacy.pharmacyName}"><svg class="icon" aria-hidden="true"><use href="#i-phone" /></svg><span>Call pharmacy</span></a><a class="icon-btn search-map-action" th:if="${med.pharmacy.googleMapLink != null and !med.pharmacy.googleMapLink.isBlank()}" th:href="${med.pharmacy.googleMapLink}" target="_blank" rel="noopener" aria-label="Open pharmacy location in Google Maps" title="Open in Google Maps"><svg class="icon"><use href="#i-route" /></svg></a><span class="phone-popover" role="dialog" aria-label="Pharmacy phone number" hidden><strong></strong><a class="phone-popover__number"></a><button type="button" class="phone-popover__close" aria-label="Close phone number"><svg class="icon"><use href="#i-x" /></svg></button></span></div>
+          </li>
+        </ul>
+        <div class="search-luxury__filter-empty" id="filterEmpty" hidden><strong>No listings match this filter.</strong><span>Try All to see every result.</span></div>
+        <p class="search-luxury__note"><svg class="icon" aria-hidden="true"><use href="#i-info" /></svg><span>Pharmacy stock can change during the day. Call ahead before travelling.</span></p>
+      </th:block>
+
+      <div class="search-luxury__empty" th:if="${searchQuery == null or searchQuery.isBlank()}"><span class="search-luxury__empty-icon"><svg class="icon"><use href="#i-search" /></svg></span><span class="eyebrow">Start with a name</span><h2>What are you looking for?</h2><p>Search a medicine, brand, or strength.</p><div class="search-luxury__empty-links"><a th:href="@{/client/search(name='paracetamol')}">Paracetamol</a><a th:href="@{/client/search(name='amoxicillin')}">Amoxicillin</a><a th:href="@{/client/search(name='ibuprofen')}">Ibuprofen</a></div></div>
+      <div class="search-luxury__empty" th:if="${searchQuery != null and !searchQuery.isBlank() and #lists.isEmpty(medicines)}"><span class="search-luxury__empty-icon"><svg class="icon"><use href="#i-search" /></svg></span><span class="eyebrow">No matches yet</span><h2>Nothing nearby right now.</h2><p>Try a shorter name or another medicine.</p><a class="btn btn--outline" th:href="@{/client}">New search</a></div>
     </div>
-  </body>
+  </section>
+</main>
+
+<th:block th:replace="~{fragments/layout :: siteFooter}" />
+<script th:src="@{/js/search.js}" defer></script>
+</body>
 </html>

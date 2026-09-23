@@ -20,19 +20,17 @@ public class ClientController {
 
     @GetMapping("/client")
     public String showClientPage(Model model) {
-
-        model.addAttribute("medicines", new java.util.ArrayList<>());
+        model.addAttribute("medicines", List.of());
         return "client-search";
     }
 
     @GetMapping("/client/search")
     public String search(@RequestParam(required = false) String name, Model model) {
-        if (name != null && !name.isEmpty()) {
-            
-            List<Medicine> results = medicineService.searchByName(name);
-            model.addAttribute("medicines", results);
-            model.addAttribute("searchQuery", name);
-        }
-        return "client-search"; 
+        String query = name == null ? "" : name.trim();
+        List<Medicine> results = query.isBlank() ? List.of() : medicineService.searchByName(query);
+        model.addAttribute("medicines", results);
+        model.addAttribute("searchQuery", query);
+        model.addAttribute("resultCount", results.size());
+        return "client-search";
     }
 }
