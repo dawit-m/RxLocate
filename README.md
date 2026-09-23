@@ -12,6 +12,10 @@
 
 </div>
 
+## Product overview
+
+Medicine availability is often fragmented across pharmacies. A patient may need to call several locations before finding a medicine in stock. RxLocate addresses that problem with a shared discovery experience for patients and an inventory workspace for pharmacies. The project also exposes the same lookup flow through USSD for low-connectivity and feature-phone use cases.
+
 ## Live demo
 
 Try the deployed application:
@@ -22,10 +26,6 @@ Demo pharmacy login:
 
 - Username: `demo-pharmacy`
 - Password: `demo12345`
-
-## Product overview
-
-Medicine availability is often fragmented across pharmacies. A patient may need to call several locations before finding a medicine in stock. RxLocate addresses that problem with a shared discovery experience for patients and an inventory workspace for pharmacies. The project also exposes the same lookup flow through USSD for low-connectivity and feature-phone use cases.
 
 ## Product preview
 
