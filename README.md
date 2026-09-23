@@ -30,6 +30,7 @@ Demo pharmacy login:
 ## Product preview
 
 ![RxLocate patient medicine search](docs/screenshots/search.png)
+![RxLocate performance reports](docs/screenshots/reports.png )
 
 The screenshot shows the patient-facing discovery experience: a medicine query, stock status, price, pharmacy location, and a clear path to contact or visit the pharmacy.
 
